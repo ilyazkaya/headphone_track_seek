@@ -1,0 +1,3 @@
+Make an app or some sort of a utility that runs in the background that changes the behavious of up and down volume buttons on the headphones to act like skip forward or backwards 10 seconds.
+Additional requirements:
+- the volume buttons on the phone must still operate as volume buttons, not skip buttons.
