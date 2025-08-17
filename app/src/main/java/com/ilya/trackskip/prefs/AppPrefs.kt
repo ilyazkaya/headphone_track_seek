@@ -10,6 +10,9 @@ object AppPrefs {
     private const val KEY_PHONE_IGNORE_MS = "phone_ignore_ms"
     private const val KEY_POST_RESTORE_MS = "post_restore_ms"
     private const val KEY_DOUBLE_PRESS_MS = "double_press_ms"
+    private const val KEY_SEEK_MS = "seek_ms"
+    private const val KEY_ENABLED = "enabled"
+    private const val KEY_ALWAYS_ON = "always_on"
 
     enum class SeekTriggerMode {
         SINGLE_PRESS_HEADSET,
@@ -60,6 +63,30 @@ object AppPrefs {
 
     fun setDoublePressWindowMs(context: Context, valueMs: Long) {
         prefs(context).edit().putLong(KEY_DOUBLE_PRESS_MS, valueMs).apply()
+    }
+
+    fun getSeekStepMs(context: Context): Long {
+        return prefs(context).getLong(KEY_SEEK_MS, 10_000L)
+    }
+
+    fun setSeekStepMs(context: Context, valueMs: Long) {
+        prefs(context).edit().putLong(KEY_SEEK_MS, valueMs).apply()
+    }
+
+    // Enable/disable behavior
+    fun isEnabled(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_ENABLED, true)
+
+    fun setEnabled(context: Context, enabled: Boolean) {
+        prefs(context).edit().putBoolean(KEY_ENABLED, enabled).apply()
+    }
+
+    // Always-on toggle
+    fun isAlwaysOn(context: Context): Boolean =
+        prefs(context).getBoolean(KEY_ALWAYS_ON, false)
+
+    fun setAlwaysOn(context: Context, enabled: Boolean) {
+        prefs(context).edit().putBoolean(KEY_ALWAYS_ON, enabled).apply()
     }
 }
 

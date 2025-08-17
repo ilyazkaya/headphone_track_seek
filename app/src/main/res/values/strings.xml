@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">track skip</string>
-    <string name="accessibility_service_name">TrackSkip Headset Controls</string>
-    <string name="accessibility_service_description">Remaps headset volume buttons to 10s seek while preserving phone volume keys.</string>
+    <string name="app_name">Headset Seek</string>
+    <string name="accessibility_service_name">Headset Seek Controls</string>
+    <string name="accessibility_service_description">Remaps headset volume buttons to seek while preserving phone volume keys.</string>
 </resources>

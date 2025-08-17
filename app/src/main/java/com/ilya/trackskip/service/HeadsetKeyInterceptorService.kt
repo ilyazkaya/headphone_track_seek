@@ -87,6 +87,7 @@ class HeadsetKeyInterceptorService : AccessibilityService() {
     }
 
     override fun onKeyEvent(event: KeyEvent): Boolean {
+        if (!AppPrefs.isEnabled(this)) return false
         if (event.action != KeyEvent.ACTION_DOWN) return false
         if (event.repeatCount > 0) return false
 
@@ -97,17 +98,20 @@ class HeadsetKeyInterceptorService : AccessibilityService() {
 
         return when (event.keyCode) {
             KeyEvent.KEYCODE_MEDIA_NEXT -> {
-                // Map next to +10s
-                MediaControllerProvider.seekBy(millisecondsDelta = 10_000L)
+                val step = AppPrefs.getSeekStepMs(this)
+                MediaControllerProvider.seekBy(millisecondsDelta = step)
             }
             KeyEvent.KEYCODE_MEDIA_PREVIOUS -> {
-                MediaControllerProvider.seekBy(millisecondsDelta = -10_000L)
+                val step = AppPrefs.getSeekStepMs(this)
+                MediaControllerProvider.seekBy(millisecondsDelta = -step)
             }
             KeyEvent.KEYCODE_MEDIA_FAST_FORWARD -> {
-                MediaControllerProvider.seekBy(millisecondsDelta = 10_000L)
+                val step = AppPrefs.getSeekStepMs(this)
+                MediaControllerProvider.seekBy(millisecondsDelta = step)
             }
             KeyEvent.KEYCODE_MEDIA_REWIND -> {
-                MediaControllerProvider.seekBy(millisecondsDelta = -10_000L)
+                val step = AppPrefs.getSeekStepMs(this)
+                MediaControllerProvider.seekBy(millisecondsDelta = -step)
             }
             KeyEvent.KEYCODE_VOLUME_UP -> {
                 when (AppPrefs.getMode(this)) {
@@ -194,7 +198,8 @@ class HeadsetKeyInterceptorService : AccessibilityService() {
         lastWasUp = isUp
 
         return if (isDouble) {
-            MediaControllerProvider.seekBy(millisecondsDelta = if (isUp) 10_000L else -10_000L)
+            val step = AppPrefs.getSeekStepMs(this)
+            MediaControllerProvider.seekBy(millisecondsDelta = if (isUp) step else -step)
         } else {
             // Allow system to handle single press as volume change
             false
@@ -271,6 +276,7 @@ class HeadsetKeyInterceptorService : AccessibilityService() {
     }
 
     private fun handleVolumeChange() {
+        if (!AppPrefs.isEnabled(this)) return
         if (!isHeadsetOutputActive) return
         val mode = AppPrefs.getMode(this)
         if (mode != AppPrefs.SeekTriggerMode.DOUBLE_PRESS_VOLUME && mode != AppPrefs.SeekTriggerMode.SINGLE_PRESS_ANY_VOLUME) return
@@ -304,7 +310,8 @@ class HeadsetKeyInterceptorService : AccessibilityService() {
                 lastObservedMusicVolume = current
                 return
             }
-            val handled = MediaControllerProvider.seekBy(if (directionUp) 10_000L else -10_000L)
+            val step = AppPrefs.getSeekStepMs(this)
+            val handled = MediaControllerProvider.seekBy(if (directionUp) step else -step)
             if (handled) {
                 // Suppress observer briefly after restoring baseline, using user-configured window
                 val suppressMs = AppPrefs.getPostRestoreSuppressMs(this)
@@ -346,7 +353,8 @@ class HeadsetKeyInterceptorService : AccessibilityService() {
 
             val newCount = pending.count + 1
             if (newCount >= 2) {
-                val handled = MediaControllerProvider.seekBy(if (directionUp) 10_000L else -10_000L)
+                val step = AppPrefs.getSeekStepMs(this)
+                val handled = MediaControllerProvider.seekBy(if (directionUp) step else -step)
                 if (handled) {
                     val suppressMs = AppPrefs.getPostRestoreSuppressMs(this)
                     ignoreObserverUntilMs = SystemClock.uptimeMillis() + suppressMs
